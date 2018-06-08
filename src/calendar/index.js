@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {
   View,
-  ViewPropTypes
+  ViewPropTypes,
+  Text
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -25,6 +26,8 @@ const EmptyArray = [];
 class Calendar extends Component {
   static propTypes = {
     // Specify theme properties to override specific styles for calendar parts. Default = {}
+    isBE: PropTypes.bool,
+
     theme: PropTypes.object,
     // Collection of dates that have to be marked. Default = {}
     markedDates: PropTypes.object,
@@ -259,6 +262,7 @@ class Calendar extends Component {
     return (
       <View style={[this.style.container, this.props.style]}>
         <CalendarHeader
+          isBE={this.props.isBE}
           theme={this.props.theme}
           hideArrows={this.props.hideArrows}
           month={this.state.currentMonth}

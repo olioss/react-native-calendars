@@ -8,6 +8,7 @@ import { weekDayNames } from '../../dateutils';
 
 class CalendarHeader extends Component {
   static propTypes = {
+    isBE: PropTypes.bool,
     theme: PropTypes.object,
     hideArrows: PropTypes.bool,
     month: PropTypes.instanceOf(XDate),
@@ -108,13 +109,18 @@ class CalendarHeader extends Component {
     if (this.props.showIndicator) {
       indicator = <ActivityIndicator />;
     }
+    let month = this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy');
+    if(this.props.isBE){
+      let year = parseInt(this.props.month.toString('yyyy'));
+      month = month.replace(year + '',year + 543 + '');
+    }
     return (
       <View>
         <View style={this.style.header}>
           {leftArrow}
           <View style={{ flexDirection: 'row' }}>
             <Text allowFontScaling={false} style={this.style.monthText} accessibilityTraits='header'>
-              {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}
+              {month}
             </Text>
             {indicator}
           </View>
