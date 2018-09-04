@@ -38,7 +38,7 @@ export default class AgendaView extends Component {
 
     // callback that gets called when items for a certain month should be loaded (month became visible)
     loadItemsForMonth: PropTypes.func,
-    // callback that fires when the calendar is opened or closed
+    // callback that fires xwhen the calendar is opened or closed
     onCalendarToggled: PropTypes.func,
     // callback that gets called on day press
     onDayPress: PropTypes.func,
@@ -120,8 +120,7 @@ export default class AgendaView extends Component {
   }
 
   initialScrollPadPosition() {
-    console.log("this.viewHeight", this.viewHeight)
-    console.log("HEADER_HEIGHT", HEADER_HEIGHT)
+    console.log("initialScrollPadPosition()");
     return Math.max(0, this.viewHeight - HEADER_HEIGHT);
   }
 
@@ -133,7 +132,6 @@ export default class AgendaView extends Component {
     // When user touches knob, the actual component that receives touch events is a ScrollView.
     // It needs to be scrolled to the bottom, so that when user moves finger downwards,
     // scroll position actually changes (it would stay at 0, when scrolled to the top).
-    console.log("initialScrollPadPosition", this.initialScrollPadPosition())
     this.setScrollPadPosition(this.initialScrollPadPosition(), false);
     // delay rendering calendar in full height because otherwise it still flickers sometimes
     setTimeout(() => this.setState({calendarIsReady: true}), 0);
@@ -154,16 +152,18 @@ export default class AgendaView extends Component {
   }
 
   onTouchEnd() {
-    console.log("onTouchEnd")
+    console.log("+onTouchEnd")
     if (this.knob) {
       this.knob.setNativeProps({style: {opacity: 1}});
     }
 
     if (this.headerState === 'touched') {
+      console.log("hellloo")
       this.setScrollPadPosition(120, true);
       this.enableCalendarScrolling();
     }
     this.headerState = 'idle';
+    console.log("-OnTouchEnd")
   }
 
   onStartDrag() {
@@ -181,13 +181,13 @@ export default class AgendaView extends Component {
     const projectedY = currentY + this.knobTracker.estimateSpeed() * 250/*ms*/;
     const maxY = this.initialScrollPadPosition();
     console.log("maxY", maxY)
-
     const snapY = (projectedY > maxY / 2) ? maxY : 120;
-    console.log("snapY", snapY)
     this.setScrollPadPosition(snapY, true);
     if (snapY === 120) {
       console.log("STOPPPP")
       this.enableCalendarScrolling();
+    } else{
+      this.disableCalendarScrolling();
     }
   }
 
@@ -233,12 +233,22 @@ export default class AgendaView extends Component {
     }
   }
 
-  enableCalendarScrolling() {
+  disableCalendarScrolling() {
     this.setState({
-      calendarScrollable: true
+      calendarScrollable: false,
     });
     if (this.props.onCalendarToggled) {
       this.props.onCalendarToggled(true);
+    }
+  }
+  enableCalendarScrolling() {
+    console.log("enableCalendarScrolling()")
+    console.log("this.state.calendarScrollable", this.state.calendarScrollable)
+    this.setState({
+      calendarScrollable: true,
+    });
+    if (this.props.onCalendarToggled) {
+      this.props.onCalendarToggled(false);
     }
     // Enlarge calendarOffset here as a workaround on iOS to force repaint.
     // Otherwise the month after current one or before current one remains invisible.
@@ -252,10 +262,13 @@ export default class AgendaView extends Component {
   }
 
   _chooseDayFromCalendar(d) {
+    console.log("_chooseDayFromCalendar")
+    console.log(this.state.calendarScrollable)
     this.chooseDay(d, !this.state.calendarScrollable);
   }
 
   chooseDay(d, optimisticScroll) {
+    console.log("chooseDay")
     const day = parseDate(d);
     this.setState({
       calendarScrollable: false,
@@ -327,6 +340,7 @@ export default class AgendaView extends Component {
   }
 
   render() {
+    console.log("RENDER")
     const agendaHeight = Math.max(0, this.viewHeight - HEADER_HEIGHT);
     const weekDaysNames = dateutils.weekDayNames(this.props.firstDay);
     const weekdaysStyle = [this.styles.weekdays, {
@@ -367,9 +381,18 @@ export default class AgendaView extends Component {
       // fill header with appStyle.calendarBackground background to reduce flickering
       weekdaysStyle.push({height: HEADER_HEIGHT});
     }
-
     const shouldAllowDragging = !this.props.hideKnob && !this.state.calendarScrollable;
-    const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 0) - KNOB_HEIGHT;
+    // const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 0) - KNOB_HEIGHT;
+    const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 500+KNOB_HEIGHT) - KNOB_HEIGHT;
+    // const shouldAllowDragging = true;
+    console.log("shouldAllowDragging",shouldAllowDragging)
+    // let scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 0) - KNOB_HEIGHT;
+    console.log("scrollPadPosition", scrollPadPosition)
+    // if (!(!this.props.hideKnob && !this.state.calendarScrollable)){
+    //   scrollPadPosition = 500;
+    // } else {
+    //   scrollPadPosition =HEADER_HEIGHT - KNOB_HEIGHT
+    // }
 
     const scrollPadStyle = {
       position: 'absolute',
