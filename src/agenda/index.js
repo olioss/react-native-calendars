@@ -120,7 +120,6 @@ export default class AgendaView extends Component {
   }
 
   initialScrollPadPosition() {
-    console.log("initialScrollPadPosition()");
     return Math.max(0, this.viewHeight - HEADER_HEIGHT);
   }
 
@@ -144,7 +143,6 @@ export default class AgendaView extends Component {
   }
 
   onTouchStart() {
-    console.log("onTouchStart")
     this.headerState = 'touched';
     if (this.knob) {
       this.knob.setNativeProps({style: {opacity: 0.5}});
@@ -152,13 +150,11 @@ export default class AgendaView extends Component {
   }
 
   onTouchEnd() {
-    console.log("+onTouchEnd")
     if (this.knob) {
       this.knob.setNativeProps({style: {opacity: 1}});
     }
 
     if (this.headerState === 'touched') {
-      console.log("hellloo")
       this.setScrollPadPosition(120, true);
       if(this.state.calendarScrollable){
         this.disableCalendarScrolling();
@@ -167,28 +163,23 @@ export default class AgendaView extends Component {
       }
     }
     this.headerState = 'idle';
-    console.log("-OnTouchEnd")
   }
 
   onStartDrag() {
-    console.log("onStartDrag")
     this.headerState = 'dragged';
     this.knobTracker.reset();
   }
 
   onSnapAfterDrag(e) {
-    console.log("onSnapAfterDrag");
     // on Android onTouchEnd is not called if dragging was started
     this.onTouchEnd();
     const currentY = e.nativeEvent.contentOffset.y;
     this.knobTracker.add(currentY);
     const projectedY = currentY + this.knobTracker.estimateSpeed() * 250/*ms*/;
     const maxY = this.initialScrollPadPosition();
-    console.log("maxY", maxY)
     const snapY = (projectedY > maxY / 2) ? maxY : 120;
     this.setScrollPadPosition(snapY, true);
     if (snapY === 120) {
-      console.log("STOPPPP")
       this.enableCalendarScrolling();
     } else{
       this.disableCalendarScrolling();
@@ -248,8 +239,6 @@ export default class AgendaView extends Component {
     }
   }
   enableCalendarScrolling() {
-    console.log("enableCalendarScrolling()")
-    console.log("this.state.calendarScrollable", this.state.calendarScrollable)
     this.setState({
       calendarScrollable: true,
     });
@@ -268,13 +257,10 @@ export default class AgendaView extends Component {
   }
 
   _chooseDayFromCalendar(d) {
-    console.log("_chooseDayFromCalendar")
-    console.log(this.state.calendarScrollable)
     this.chooseDay(d, !this.state.calendarScrollable);
   }
 
   chooseDay(d, optimisticScroll) {
-    console.log("chooseDay")
     const day = parseDate(d);
     this.setState({
       calendarScrollable: false,
@@ -346,7 +332,6 @@ export default class AgendaView extends Component {
   }
 
   render() {
-    console.log("RENDER")
     const agendaHeight = Math.max(0, this.viewHeight - HEADER_HEIGHT);
     const weekDaysNames = dateutils.weekDayNames(this.props.firstDay);
     const weekdaysStyle = [this.styles.weekdays, {
@@ -388,17 +373,7 @@ export default class AgendaView extends Component {
       weekdaysStyle.push({height: HEADER_HEIGHT});
     }
     const shouldAllowDragging = !this.props.hideKnob && !this.state.calendarScrollable;
-    // const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 0) - KNOB_HEIGHT;
     const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 500+KNOB_HEIGHT) - KNOB_HEIGHT;
-    // const shouldAllowDragging = true;
-    console.log("shouldAllowDragging",shouldAllowDragging)
-    // let scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 0) - KNOB_HEIGHT;
-    console.log("scrollPadPosition", scrollPadPosition)
-    // if (!(!this.props.hideKnob && !this.state.calendarScrollable)){
-    //   scrollPadPosition = 500;
-    // } else {
-    //   scrollPadPosition =HEADER_HEIGHT - KNOB_HEIGHT
-    // }
 
     const scrollPadStyle = {
       position: 'absolute',
