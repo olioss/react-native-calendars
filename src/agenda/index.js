@@ -160,7 +160,11 @@ export default class AgendaView extends Component {
     if (this.headerState === 'touched') {
       console.log("hellloo")
       this.setScrollPadPosition(120, true);
-      this.enableCalendarScrolling();
+      if(this.state.calendarScrollable){
+        this.disableCalendarScrolling();
+      } else {
+        this.enableCalendarScrolling();
+      }
     }
     this.headerState = 'idle';
     console.log("-OnTouchEnd")
@@ -237,8 +241,10 @@ export default class AgendaView extends Component {
     this.setState({
       calendarScrollable: false,
     });
+    this.setScrollPadPosition(this.initialScrollPadPosition(), true);
+    this.calendar.scrollToDay(this.state.selectedDay, this.calendarOffset(), true);
     if (this.props.onCalendarToggled) {
-      this.props.onCalendarToggled(true);
+      this.props.onCalendarToggled(false);
     }
   }
   enableCalendarScrolling() {
