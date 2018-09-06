@@ -373,7 +373,7 @@ export default class AgendaView extends Component {
       weekdaysStyle.push({height: HEADER_HEIGHT});
     }
     const shouldAllowDragging = !this.props.hideKnob && !this.state.calendarScrollable;
-    const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 500+KNOB_HEIGHT) - KNOB_HEIGHT;
+    const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : this.initialScrollPadPosition() -17) - KNOB_HEIGHT ;
 
     const scrollPadStyle = {
       position: 'absolute',
